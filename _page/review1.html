@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
+
+        body {
+            font-family: "NanumSquare", sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .rice-cooker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            width: 100%;
+            /* 그리드 컨테이너가 화면 너비를 꽉 채우도록 설정 */
+
+            gap: 20px;
+        }
+
+        .rice-cooker-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+
+            transition: transform 0.3s ease;
+        }
+
+        .rice-cooker-card:hover {
+            transform: scale(1.02);
+        }
+
+        .rice-cooker-card.active {
+            transform: scale(1.02);
+        }
+
+        .card-left {
+            flex: 1;
+
+
+            padding-right: 20px;
+        }
+
+        .card-right {
+            flex: 1;
+        }
+
+        .rank-badge {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            padding: 5px 10px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-slogan {
+            color: #718096;
+            font-size: 0.875rem;
+            margin-bottom: 15px;
+        }
+
+        .image-container {
+            width: 100%;
+            padding-top: 100%;
+            /* 1:1 aspect ratio */
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .card-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .click-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.6);
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.3s ease, background-color 0.3s ease;
+            pointer-events: none;
+        }
+
+        .image-container:hover .card-image {
+            transform: scale(1.05);
+        }
+
+        .image-container:hover .click-button {
+            opacity: 1;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .capacity-badge {
+            background-color: #edf2f7;
+            color: #4a5568;
+            padding: 5px 10px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .features {
+            margin-bottom: 10px;
+        }
+
+        .features h5 {
+            margin-bottom: 5px;
+        }
+
+        .features ul {
+            padding-left: 20px;
+            margin: 0;
+            list-style-type: disc;
+        }
+
+        .pros,
+        .cons,
+        .recommended {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .pros i,
+        .cons i,
+        .recommended i {
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .pros ul,
+        .cons ul {
+            padding-left: 20px;
+            margin: 0;
+            list-style-type: disc;
+        }
+
+        .icon-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .icon-container i {
+            font-size: 2rem;
+            color: gold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <p>
+            <center>(사진을 누르면 쿠팡으로 이동합니다.)</center>
+        </p>
+        <div class="rice-cooker-grid" id="riceCookerGrid"></div>
+    </div>
+    <div>
+        <p>
+            <center>"이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."</center>
+        </p>
+    </div>
+    <script>
+        const riceCookers = [
+            {
+                model: "CRP-LHTR1010FGWM",
+                capacity: "10인용",
+                price: "411,790",
+                features: "2기압 초고압/무압 취사, 쾌속취사, 오픈쿠킹, 스테인리스 내솥, 2중 모션 패킹, 원터치 탈부착, 음성안내, 백미/잡곡/현미/죽/찜 등 다양한 취사 모드 지원, 밥맛 조절 기능, 예약 취사 기능, 자동 세척 기능",
+                pros: "고급스러운 디자인, 다양한 취향 요리 가능, 위생적인 관리, 뛰어난 밥맛, 넉넉한 용량",
+                cons: "가격",
+                recommended: "디자인, 요리와 밥맛, 편리함까지 모두 중요하게 생각하는 사람",
+                rank: 1,
+                slogan: "모든 걸 다 갖춘 올인원",
+                link: "https://link.coupang.com/a/bL0VAM"
+            },
+            {
+                model: "CRP-CHP1010FD",
+                capacity: "10인용",
+                price: "244,600",
+                features: "2기압 초고압 취사, 풀스테인리스 분리형 커버, 스테인리스 내솥, 음성안내, 백미/잡곡/현미/죽/찜 모드, 예약 취사 기능, 자동 세척 기능",
+                pros: "합리적인 가격, 뛰어난 밥맛, 넉넉한 용량",
+                cons: "무압 취사 기능 없음, 오픈쿠킹 기능 없음",
+                recommended: "가성비를 중요하게 생각하는 실용적인 소비자",
+                rank: 2,
+                slogan: "초고압, IH, 용량을 다 잡은 가성비",
+                link: "https://link.coupang.com/a/bL0UAr"
+            },
+            {
+                model: "CRP-LHTR0610FGIM",
+                capacity: "6인용",
+                price: "355,100",
+                features: "2기압 초고압/무압 취사, 쾌속취사, 오픈쿠킹, 스테인리스 내솥, 2중 모션 패킹, 원터치 탈부착, 음성안내, 백미/잡곡/현미/죽/찜 등 다양한 취사 모드 지원, 밥맛 조절 기능, 예약 취사 기능, 자동 세척 기능",
+                pros: "컴팩트한 사이즈, 고급스러운 디자인, 다양한 취향 요리 가능, 위생적인 관리, 뛰어난 밥맛, 넉넉한 용량",
+                cons: "용량이 작음, 가격이 비싼 편",
+                recommended: "1~3인 가구, 공간 효율성을 중시하는 사람",
+                rank: 3,
+                slogan: "컴팩트 프리미엄",
+                link: "https://link.coupang.com/a/bL0Sxs"
+            },
+            {
+                model: "CRP-HUF10BS",
+                capacity: "10인용",
+                price: "187,500",
+                features: "IH 취사, 10인용 용량, 보온 기능, 예약 취사 기능",
+                pros: "매우 저렴한 가격, 넉넉한 용량",
+                cons: "초고압이 아님, 일부만 스테인리스, 음성 안내 없음, 쾌속 취사 기능 없음, 뽑기운에 따라 밥 눌어붙거나 변색될 수 있음",
+                recommended: "저렴한 IH 밥솥을 찾는 알뜰한 소비자",
+                rank: 4,
+                slogan: "핵심에만 집중한 가성비",
+                link: "https://link.coupang.com/a/bL0WfW"
+            }
+        ];
+
+        function createRiceCookerCard(cooker) {
+            return `
+                <div class="rice-cooker-card">
+                    <div class="card-left">
+                        <div class="rank-badge">#${cooker.rank}위</div>
+                        <h2 class="card-title">${cooker.slogan}</h2>
+                        <p class="card-slogan">${cooker.model}</p>
+                        <div class="image-container">
+                            <a href="${cooker.link}" target="_blank" rel="noopener noreferrer">
+                                <img src="https://dobalst.com/wp-content/uploads/2024/08/${encodeURIComponent(cooker.model)}.jpg" alt="${cooker.model} 이미지" class="card-image">
+                                <a class="click-button">클릭</a>
+                            </a>
+                        </div>
+                        <div class="capacity-badge">${cooker.capacity}</div>
+                        <div class="price">
+                            <i class="fas fa-won-sign"></i>
+                            <span>${cooker.price}</span>
+                        </div>
+                    </div>
+                    <div class="card-right">
+                        <div class="features">
+                            <h5>주요 기능</h5>
+                            <ul>
+                                ${cooker.features.split(', ').map(feature => `<li>${feature}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="features"> 
+                            <i class="fas fa-thumbs-up"> 장점</i>
+                            <ul>
+                                ${cooker.pros.split(', ').map(pros => `<li>${pros}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="features">
+                            <i class="fas fa-thumbs-down"> 단점</i>
+                            <ul>
+                                ${cooker.cons.split(', ').map(cons => `<li>${cons}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="features">
+                            <i class="fas fa-users"> 추천대상</i>
+                            <ul>
+                                <li>${cooker.recommended}</li>
+                            </ul>
+                        </div>
+                        <div class="icon-container">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const grid = document.getElementById('riceCookerGrid');
+            riceCookers.sort((a, b) => a.rank - b.rank).forEach(cooker => {
+                grid.innerHTML += createRiceCookerCard(cooker);
+            });
+
+            const cards = document.querySelectorAll('.rice-cooker-card');
+            let activeIndex = 0;
+
+            setInterval(() => {
+                cards[activeIndex].classList.remove('active');
+                activeIndex = (activeIndex + 1) % cards.length;
+                cards[activeIndex].classList.add('active');
+            }, 1000); // 3초마다 카드 변경
+        });
+    </script>
+</body>
+
+</html>

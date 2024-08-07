@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
+
+        body {
+            font-family: "NanumSquare", sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .rice-cooker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            width: 100%;
+            /* 그리드 컨테이너가 화면 너비를 꽉 채우도록 설정 */
+            gap: 20px;
+        }
+
+        .rice-cooker-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+
+        .rice-cooker-card:hover {
+            transform: scale(1.02);
+        }
+
+        .rice-cooker-card.active {
+            transform: scale(1.02);
+        }
+
+        .card-left {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .card-right {
+            flex: 1;
+        }
+
+        .rank-badge {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            padding: 5px 10px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-slogan {
+            color: #718096;
+            font-size: 0.875rem;
+            margin-bottom: 15px;
+        }
+
+        .image-container {
+            width: 100%;
+            padding-top: 100%;
+            /* 1:1 aspect ratio */
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .card-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .click-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.6);
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.3s ease, background-color 0.3s ease;
+            pointer-events: none;
+        }
+
+        .image-container:hover .card-image {
+            transform: scale(1.05);
+        }
+
+        .image-container:hover .click-button {
+            opacity: 1;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .capacity-badge {
+            background-color: #edf2f7;
+            color: #4a5568;
+            padding: 5px 10px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .features {
+            margin-bottom: 10px;
+        }
+
+        .features h5 {
+            margin-bottom: 5px;
+        }
+
+        .features ul {
+            padding-left: 20px;
+            margin: 0;
+            list-style-type: disc;
+        }
+
+        .pros,
+        .cons,
+        .recommended {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .pros i,
+        .cons i,
+        .recommended i {
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .pros ul,
+        .cons ul {
+            padding-left: 20px;
+            margin: 0;
+            list-style-type: disc;
+        }
+
+        .icon-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .icon-container i {
+            font-size: 2rem;
+            color: gold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="w">
+        <a href="/">..</a>
+        <article>
+            {{ content }}
+        </article>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const grid = document.getElementById('riceCookerGrid');
+
+            // riceCookers 변수를 사용
+            riceCookers.sort((a, b) => a.rank - b.rank).forEach(cooker => {
+                grid.innerHTML += createRiceCookerCard(cooker);
+            });
+
+            const cards = document.querySelectorAll('.rice-cooker-card');
+            let activeIndex = 0;
+
+            setInterval(() => {
+                cards[activeIndex].classList.remove('active');
+                activeIndex = (activeIndex + 1) % cards.length;
+                cards[activeIndex].classList.add('active');
+            }, 1000); // 3초마다 카드 변경
+        });
+
+        function createRiceCookerCard(cooker) {
+            return `
+                <div class="rice-cooker-card">
+                    <div class="card-left">
+                        <div class="rank-badge">#${cooker.rank}위</div>
+                        <h2 class="card-title">${cooker.slogan}</h2>
+                        <p class="card-slogan">${cooker.model}</p>
+                        <div class="image-container">
+                            <a href="${cooker.link}" target="_blank" rel="noopener noreferrer">
+                                <img src="${cooker.image}" alt="${cooker.model} 이미지" class="card-image">
+                                <a class="click-button">클릭</a>
+                            </a>
+                        </div>
+                        <div class="capacity-badge">${cooker.capacity}</div>
+                        <div class="price">
+                            <i class="fas fa-won-sign"></i>
+                            <span>${cooker.price}</span>
+                        </div>
+                    </div>
+                    <div class="card-right">
+                        <div class="features">
+                            <h5>주요 기능</h5>
+                            <ul>
+                                ${cooker.features.split(', ').map(feature => `<li>${feature}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="features"> 
+                            <i class="fas fa-thumbs-up"> 장점</i>
+                            <ul>
+                                ${cooker.pros.split(', ').map(pros => `<li>${pros}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="features">
+                            <i class="fas fa-thumbs-down"> 단점</i>
+                            <ul>
+                                ${cooker.cons.split(', ').map(cons => `<li>${cons}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="features">
+                            <i class="fas fa-users"> 추천대상</i>
+                            <ul>
+                                <li>${cooker.recommended}</li>
+                            </ul>
+                        </div>
+                        <div class="icon-container">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+    </script>
+</body>
+
+</html>
